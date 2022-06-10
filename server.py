@@ -38,12 +38,17 @@ def start():
 
         if keyfile or chainfile:
             print("Starting the server with SSL/TLS on port " + str(port))
+            private_key = ''
             with open(keyfile, 'rb') as f:
                 private_key = f.read()
-            with open(sys.argv[2], 'rb') as f:
+
+            certificate_chain = ''
+            with open(chainfile, 'rb') as f:
                 certificate_chain = f.read()
+
             # Binds ssl certificate chain and private key to the server
-            server_credentials = grpc.ssl_server_credentials( ( (private_key, certificate_chain) ) )
+            server_credentials = grpc.ssl_server_credentials([(private_key, certificate_chain)])
+
             # Opens a secure grpc service on the specified port of the server
             server.add_secure_port('127.0.0.1:' + str(port) , server_credentials)
         else:
@@ -63,4 +68,3 @@ def start():
         print(inst)
         print("Usage : python3 server.py (-h|help) (-p|-port=)<port> (-c|certfile=)<PathToCertificat> (-a|authorityfile=)<PathToTrustedAuthority>") 
 start()
-    

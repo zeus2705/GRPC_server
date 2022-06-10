@@ -46,7 +46,7 @@ def start():
             with grpc.secure_channel('127.0.0.1:' + str(port), creds) as channel:
 
                 # Connects the client to the group function "QuickMath"
-                stub = functionplusone_pb2.QuickMathStub(channel)
+                stub = functionplusone_pb2_grpc.QuickMathStub(channel)
                 if testconnection(stub):
                     print("Connected with the server")
                 else:
