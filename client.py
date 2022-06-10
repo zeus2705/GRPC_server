@@ -3,6 +3,8 @@ import functionplusone_pb2
 import functionplusone_pb2_grpc
 import sys, getopt
 
+# Function to test the correct connection to the server
+# returns true if connected false otherwise
 def testconnection(stub):
     try:
         return stub.Plusone(functionplusone_pb2.number(x = 5000)).reply == 5001
@@ -12,12 +14,19 @@ def testconnection(stub):
 
 
 
-
+# Function to start a client
+# returns nothing
 def start():
     try:
+        #Variable that stores the path to the certicat
         certfile = ''
+        #Variable that stores the port
         port = 26597
+        
+        #Parse the arguments
         opts, args = getopt.getopt(sys.argv[1:],"hc:p:",["certfile=","port=","help"])
+
+        #Change variable with argument
         for opt, arg in opts:
             if opt == '-h' or opt == "help":
                 print("Usage : python3 client.py (-h|--help) (-p|--port=)<port> (-c|--certfile=)<PathToCertificat>")
@@ -26,10 +35,17 @@ def start():
                 certfile = arg
             elif opt == '-p' or opt == "--port":
                 port = int(arg)
+
+        #if ssl authentification
         if certfile:
+
             with open(certfile, 'rb') as f:
                 creds = grpc.ssl_channel_credentials(f.read())
+
+            # Creates a secure client for the server
             with grpc.secure_channel('127.0.0.1:' + str(port), creds) as channel:
+
+                # Connects the client to the group function "QuickMath"
                 stub = functionplusone_pb2.QuickMathStub(channel)
                 if testconnection(stub):
                     print("Connected with the server")
@@ -47,10 +63,16 @@ def start():
                     except:
                         print('Please type a valid number')
                         continue
+                    # Sends the function call to the server
                     response = stub.Plusone(functionplusone_pb2.number(x = number))
+         
                     print("Server responded : " + str(response.reply))
+
+        #No ssl authentification
         else:
+            # Creates a client for the server
             with grpc.insecure_channel('127.0.0.1:' + str(port)) as channel:
+                # Connects the client to the group function "QuickMath"
                 stub = functionplusone_pb2_grpc.QuickMathStub(channel)
                 if testconnection(stub):
                     print("Connected with the server")
@@ -68,6 +90,7 @@ def start():
                     except:
                         print('Please type a valid number')
                         continue
+                    # Sends the function call to the server
                     response = stub.Plusone(functionplusone_pb2.number(x = number))
                     print("Server responded : " + str(response.reply))
     except Exception as inst:
