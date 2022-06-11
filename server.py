@@ -9,7 +9,10 @@ import sys, getopt
 class QuickMath(functionplusone_pb2_grpc.QuickMath):
     # RPC function "Plusone" of group "QuickMath"
     def Plusone(self, request, context):
-        print("\nPlusone was call with argument : ",str(request.x))
+        if (str(request.x) == "0"):
+            print("\nNew client connected!")
+        else:
+            print("\nPlusone was call with argument : ", str(request.x))
         return functionplusone_pb2.plusonereply(reply = request.x + 1)
 
 # Variable bound to the grpc server
@@ -24,16 +27,16 @@ def start():
         # Variable that contains the port
         port = 26597
         # Parses command line arguments
-        opts, args = getopt.getopt(sys.argv[1:],"hc:a:p:",["certfile=","authorityfile=","port=","help"])
+        opts, args = getopt.getopt(sys.argv[1:],"hk:c:p:",["keyfile=","certfile=","port=","help"])
         for opt, arg in opts:
-            if opt == '-h' or opt == "help":
-                print("Usage : python3 server.py (-h|--help) (-p|--port=)<port> (-c|--certfile=)<PathToCertificat> (-a|--authorityfile=)<PathToTrustedAuthority>")
+            if opt == '-h' or opt == "--help":
+                print("Usage: python3 server.py (-h|--help) (-p|--port=)<port> (-k|--keyfile=)<PathToKeyfile> (-c|--certfile=)<PathToCertificate>")
                 exit(1)
-            elif opt == '-c' or opt == "--certfile":
+            elif opt == '-k' or opt == "--keyfile":
                 keyfile = arg
             elif opt == '-p' or opt == "--port":
                 port = int(arg)
-            elif opt == '-a' or opt == "--authorityfile":
+            elif opt == '-c' or opt == "--certfile":
                 chainfile = arg
 
         if keyfile or chainfile:
@@ -66,5 +69,5 @@ def start():
                 break
     except Exception as inst:
         print(inst)
-        print("Usage : python3 server.py (-h|help) (-p|-port=)<port> (-c|certfile=)<PathToCertificat> (-a|authorityfile=)<PathToTrustedAuthority>") 
+        print("Usage: python3 server.py (-h|--help) (-p|--port=)<port> (-k|--keyfile=)<PathToKeyfile> (-c|--certfile=)<PathToCertificate>")
 start()

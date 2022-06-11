@@ -7,12 +7,9 @@ import sys, getopt
 # returns true if connected false otherwise
 def testconnection(stub):
     try:
-        return stub.Plusone(functionplusone_pb2.number(x = 5000)).reply == 5001
+        return stub.Plusone(functionplusone_pb2.number(x = 0)).reply == 1
     except:
         return False
-    
-
-
 
 # Function to start a client
 # returns nothing
@@ -28,8 +25,8 @@ def start():
 
         #Change variable with argument
         for opt, arg in opts:
-            if opt == '-h' or opt == "help":
-                print("Usage : python3 client.py (-h|--help) (-p|--port=)<port> (-c|--certfile=)<PathToCertificat>")
+            if opt == '-h' or opt == "--help":
+                print("Usage: python3 client.py (-h|--help) (-p|--port=)<port> (-c|--certfile=)<PathToCertificate>")
                 exit(1)
             elif opt == '-c' or opt == "--certfile":
                 certfile = arg
@@ -95,6 +92,6 @@ def start():
                     print("Server responded : " + str(response.reply))
     except Exception as inst:
         print(inst)
-        print("Usage : python3 client.py (-h|--help) (-p|--port=)<port> (-c|--certfile=)<PathToCertificat>")
+        print("Usage: python3 client.py (-h|--help) (-p|--port=)<port> (-c|--certfile=)<PathToCertificate>")
 
 start()
